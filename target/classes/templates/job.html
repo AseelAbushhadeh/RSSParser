@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="https://bootswatch.com/5/slate/bootstrap.css">
+  <style>
+      .container {
+        display: flex;
+        flex-direction: row;
+      }
+
+      table {
+        width: 50%;
+      }
+
+      #map-container {
+        width: 50%;
+        height: 600px;
+        position: sticky;
+        top: 0;
+        overflow-y: auto;
+        margin-left: 10px;
+      }
+
+      #map {
+        height: 100%;
+      }
+  </style>
+
+
+  <script>
+  var map;
+  var markers = [];
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: 0, lng: 0 },
+      zoom: 1
+    });
+  }
+
+  function markOnMap(latitude, longitude, country) {
+    clearMarkers();
+
+    var position = new google.maps.LatLng(latitude, longitude);
+
+    map.setCenter(position);
+    map.setZoom(8);
+
+    var marker = new google.maps.Marker({
+      position: position,
+      title: country,
+      map: map
+    });
+
+    markers.push(marker);
+  }
+
+  function clearMarkers() {
+    // Remove all markers from the map
+    markers.forEach(function (marker) {
+      marker.setMap(null);
+    });
+
+    // Clear the markers array
+    markers = [];
+  }
+</script>
+  <script async  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0kP3R5VNpqE_UycGTi3h0iJaHbDg84V8&libraries=places&callback=initMap"></script>
+
+
+  <meta charset="UTF-8">
+    <title>Jobs</title>
+</head>
+<body>
+
+<div class="container">
+  <table d="itemTable" style=" margin:auto; opacity: .8;" class="table table-hover">
+    <thead>
+      <tr><th>Jobs</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="item : ${items}">
+        <td th:text="${item.title}"
+            th:attr="onclick='markOnMap(\'' + ${item.geoCoordinates.latitude} + '\', \'' +${item.geoCoordinates.longitude} + '\', \'' + ${item.country} + '\');'" ></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+</div>
+
+
+</body>
+</html>
